@@ -12,26 +12,28 @@ export default function ApiKeyPage() {
     useEffect(() => {
         async function buscarSeries() {
             try {
-                const resp = await axios.get(`${process.env.NEXT_PUBLIC_URL_SERIES}?limit=50`, {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_URL_SERIES}?limit=50`, {
                     headers: { 'x-api-key': process.env.NEXT_PUBLIC_API_KEY },
                 });
-                toast.success('Séries carregadas !', { id: 'getApiKey' });
-                setSeries(resp.data.data);
-            } catch {
+                toast.success('Séries carregadas com sucesso.', { id: 'getApiKey' });
+                const data = response.data;
+                setSeries(
+                    Array.isArray(data) ? data : data.data || [],
+                );
+            } catch (error) {
                 toast.error('Erro ao buscar as séries.', { id: 'getApiKey' });
             } finally {
                 setLoading(false);
             }
         }
-
         buscarSeries();
     }, []);
 
     return (
         <main>
-            <h2>Veja api-key ficando exposta no header desta chamada.</h2>
-            <p>DevTools - Network - Header - series</p>
-            <p>Axios.get direto na API, com api-key exposta no navegador.</p>
+            <h2>Veja api-key ficando exposta no header desta chamada</h2>
+            <p>DevTools - Network - Headers - Series</p>
+            <p> Axios.get direto na api-key exposta no navegador</p>
             {loading ? (
                 <div className={'skeleton'}>
                     <Skeleton active />
@@ -39,10 +41,16 @@ export default function ApiKeyPage() {
             ) : (
                 <ul>
                     {series.map((item) => (
-                        <li key={item.id}>{item.title}</li>
+                        <li key={item.id}>
+                            <strong>
+                                {item.title}
+                            </strong>{' '}
+                            - {item.genero} -{' '}
+                            {item.ano_lancamento}
+                        </li>
                     ))}
                 </ul>
             )}
         </main>
-    )
-  }
+    );
+}
