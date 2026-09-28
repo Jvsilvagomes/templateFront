@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# CRUD Front — Next.js 16 (App Router)
 
-## Getting Started
+## 🟣 arrays de Exemplos
 
-First, run the development server:
+### 🔑 Get - ApiKey → `/apikey`
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```mermaid
+flowchart LR
+    S[🖥️ Server] -- 1. página --> B[🌐 Browser/Client]
+    B -- 2. x-api-key --> A[(🗄️ API/BD)]
+    A -- 3. séries --> B
+    style S fill:#dfd,stroke:#090
+    style B fill:#ddf,stroke:#00c
+    style A fill:#fed,stroke:#c60
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+❌ **api-key exposta** — o browser vai direto na API, sem voltar ao server (DevTools → Network → Headers → `x-api-key`)
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 🖥️ Get - SSR → `/ssr`
 
-## Learn More
+```mermaid
+flowchart LR
+    S[🖥️ Server] -- 1. x-api-key --> A[(🗄️ API/BD)]
+    A -- 2. séries --> S
+    S -- 3. página + séries --> B[🌐 Browser/Client]
+    B -.->|"4. salva"| SS[💾 sessionStorage]
+    style S fill:#dfd,stroke:#090
+    style B fill:#ddf,stroke:#00c
+    style A fill:#fed,stroke:#c60
+    style SS fill:#ffd,stroke:#a80
+```
 
-To learn more about Next.js, take a look at the following resources:
+✅ **api-key privada** · 💾 **dados salvos no browser** — DevTools → Application → Session Storage
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+> 💡 O passo 4 (**é adicional**): salvar no sessionStorage serve apenas para o card **Get - Offline** funcionar sem API.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+### 📴 Get - Offline → `/offline`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```mermaid
+flowchart LR
+    S[🖥️ Server] -- 1. página --> B[🌐 Browser/Client]
+    B -- 2. lê --> SS[💾 sessionStorage]
+    SS -- 3. séries --> B
+    style S fill:#dfd,stroke:#090
+    style B fill:#ddf,stroke:#00c
+    style SS fill:#ffd,stroke:#a80
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+✅ **sem chamar a API** — DevTools → Network vazio
+
+> 💡 Lê os dados que o **Get - SSR** salvou (passo 4 tracejado). Visite o `/ssr` antes.
+
+---
+
+### 🔗 Get - FullStack → `/fullstack`
+
+```mermaid
+flowchart LR
+    S[🖥️ Server] -- 1. página --> B[🌐 Browser/Client]
+    B -- 2. /api/series --> R[🖥️ Server<br/>API Route]
+    R -- 3. x-api-key --> A[(🗄️ API/BD)]
+    A -- 4. séries --> R
+    R -- 5. séries --> B
+    style S fill:#dfd,stroke:#090
+    style R fill:#dfd,stroke:#090
+    style B fill:#ddf,stroke:#00c
+    style A fill:#fed,stroke:#c60
+```
+
+✅ **api-key privada** — o browser volta ao server (route.js), que vai na API (DevTools → Network → só `/api/series`, sem `x-api-key`)
+
+---
+
+## 🧩 arrays de CRUD
+
+### ➕ Post - Create → `/create`
+
+```mermaid
+flowchart LR
+    S[🖥️ Server] -- 1. página --> B[🌐 Browser/Client]
+    B -- 2. POST /api/series --> R[🖥️ Server<br/>API Route]
+    R -- 3. x-api-key + série --> A[(🗄️ API/BD)]
+    A -- 4. séries --> R
+    R -- 5. séries --> B
+    style S fill:#dfd,stroke:#090
+    style R fill:#dfd,stroke:#090
+    style B fill:#ddf,stroke:#00c
+    style A fill:#fed,stroke:#c60
+```
+
+✅ **api-key privada** — o formulário vai para o route.js, que cria na API (DevTools → Network → `series` → Payload, sem `x-api-key`)
