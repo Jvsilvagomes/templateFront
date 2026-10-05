@@ -39,8 +39,8 @@ export default function CreatePage() {
                 openModal={openModal}
                 confirmLoading={loading}
                 onSubmit={handleSubmit}
-                onCancel={ () => setOpenModal(false)}
-                />
+                onCancel={() => setOpenModal(false)}
+            />
         </main>
     );
 }
