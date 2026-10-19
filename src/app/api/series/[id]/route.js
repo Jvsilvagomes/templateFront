@@ -1,21 +1,37 @@
-import axios from "axios";
-import { NextResponse } from "next/server";
+import axios from 'axios';
+import { NextResponse } from 'next/server';
 
-export async function GET(_request, { params }) {
-    const { id } = await params;
+export async function GET(req) {
+    const { searchParams } = new URL(req.url);
 
     try {
-        const response = await axios.get(`${process.env.API_URL_SERIES}/${id}`, {
-            headers: {
-                'x-api-key': process.env.API_KEY
-            },
+        const resp = await axios.get(process.env.API_URL_SERIES, {
+            params: Object.fromEntries(searchParams),
+            headers: { 'x-api-key': process.env.API_KEY },
         });
-        
-        return NextResponse.json(response.data);
 
+        return NextResponse.json(resp.data);
     } catch (error) {
         const status = error.response?.status || 500;
-        const data = error.response?.data || { error: 'Erro interno do servidor' };
+        const data = error.response?.data || { error: 'Erro ao buscar as séries.' };
+
+        return NextResponse.json(data, { status });
+    }
+}
+
+export async function POST(req) {
+    const body = await req.json();
+
+    try {
+        const resp = await axios.post(process.env.API_URL_SERIES, body, {
+            headers: { 'x-api-key': process.env.API_KEY },
+        });
+
+        return NextResponse.json(resp.data);
+    } catch (error) {
+        const status = error.response?.status || 500;
+        const data = error.response?.data || { error: 'Erro ao criar a série.' };
+
         return NextResponse.json(data, { status });
     }
 }

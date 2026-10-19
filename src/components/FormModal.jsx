@@ -1,6 +1,6 @@
 'use client';
 
-import { Form, Input, InputNumber, Modal } from "antd";
+import { Modal, Form, Input, InputNumber } from 'antd';
 
 export default function FormModal({ openModal, serie, confirmLoading, onSubmit, onCancel }) {
     const [form] = Form.useForm();
@@ -8,7 +8,7 @@ export default function FormModal({ openModal, serie, confirmLoading, onSubmit, 
     return (
         <Modal
             open={openModal}
-            title={serie ? 'Editar Série' : 'Cria nova Série'}
+            title={serie ? 'Editar série' : 'Criar nova série'}
             centered
             onOk={() => form.submit()}
             onCancel={onCancel}
@@ -20,89 +20,76 @@ export default function FormModal({ openModal, serie, confirmLoading, onSubmit, 
                     label="Título"
                     rules={[
                         {
-                            required: true,
+                            require: true,
                             min: 3,
                             max: 120,
-                            message: 'Título é obrigatório e deve ter entre 3 e 120 caracteres!'
+                            message: 'Título obrigatório deve ter entre 3 e 120 caractéres',
                         },
                     ]}>
-                    <Input placeholder='ex: Breaking Bad' />
+                    <Input placeholder="ex: Breaking Bad" />
                 </Form.Item>
-
                 <Form.Item
                     name="genero"
                     label="Gênero"
                     rules={[
                         {
-                            required: true,
-                            min: 3,
-                            max: 120,
-                            message: 'Gênero é obrigatório!'
+                            require: true,
+                            message: 'Gênero é obrigatório',
                         },
                     ]}>
-                    <Input placeholder='ex: Drama' />
+                    <Input placeholder="ex: Ação" />
                 </Form.Item>
-
                 <Form.Item
                     name="plataforma"
                     label="Plataforma"
                     rules={[
                         {
-                            required: true,
-                            min: 3,
-                            max: 120,
-                            message: 'Plataforma é obrigatória!'
+                            require: true,
+                            message: 'Plataforma é obrigatório',
                         },
                     ]}>
-                    <Input placeholder='ex: Netflix' />
+                    <Input placeholder="ex: Netflix" />
                 </Form.Item>
-
                 <Form.Item
                     name="numero_temporadas"
-                    label="Número de Temporadas"
+                    label="Temporadas"
                     rules={[
                         {
-                            required: true,
+                            require: true,
                             type: 'number',
-                            min: 1,
-                            message: 'Número de Temporadas é obrigatório e deve ser um número positivo!'
+                            message: 'Número de temporadas é obrigatório',
                         },
                     ]}>
-                    <InputNumber placeholder='ex: 5'
-                     min={1}
-                      style={{ width: '100%' }} />
+                    <InputNumber placeholder="ex: 5" min={1} style={{ width: '100%' }} />
                 </Form.Item>
-
                 <Form.Item
                     name="ano_lancamento"
-                    label="Ano de Lançamento"
+                    label="Ano de lançamento"
                     rules={[
                         {
-                            required: true,
+                            require: true,
                             type: 'number',
-                            min: 1,
-                            message: 'Ano de Lançamento é obrigatório e deve ser um número positivo!'
+                            message: 'Ano de lançamento é obrigatório',
                         },
                     ]}>
-                    <InputNumber 
-                    placeholder='ex: 2020' 
-                    min={1} 
-                    style={{ width: '100%' }} />
+                    <InputNumber
+                        placeholder="ex: 2008"
+                        min={1900}
+                        max={2100}
+                        style={{ width: '100%' }}
+                    />
                 </Form.Item>
 
                 <Form.Item
                     name="imageUrl"
-                    label="URL da Imagem"
+                    label="Url da imagem"
                     rules={[
                         {
                             type: 'url',
-                            message: 'Deve ser uma URL válida!'
+                            message: 'Deve ser um URL válido',
                         },
                     ]}>
-                    <Input 
-                    placeholder='ex: https://codeverse.dev.br/images/breaking-bad.png' 
-                    min={1} 
-                    style={{ width: '100%' }} />
+                    <Input placeholder="ex: https://codeverse.dev.br/breaking-bad.png" />
                 </Form.Item>
             </Form>
         </Modal>

@@ -1,14 +1,14 @@
-'use client'
+'use client';
 
-import FormModal from "@/components/FormModal";
-import { Button, Card, Skeleton } from "antd";
-import axios from "axios";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import FormModal from '@/components/FormModal';
+import ConfirmDelete from '@/components/ConfirmDelete';
+import { Button, Card, Skeleton } from 'antd';
+import axios from 'axios';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 
 export default function ReadByIdPage() {
-
     const { id } = useParams();
     const [serie, setSerie] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -29,14 +29,46 @@ export default function ReadByIdPage() {
                 setLoading(false);
             }
         }
-
         buscarSerie();
     }, [id]);
 
+    const handleUpdate = async (values) => {
+        setSaving(true);
+        try {
+            await axios.put(`/api/series/${id}`, values);
+            setSerie({ ...serie, ...values });
+            setEditOpen(false);
+            toast.success("Série atualizada com sucesso!", { id: "update-sucess" });
+        } catch (error) {
+            toast.error('Erro ao atualizar a série.', { id: "update-error" });
+            console.error(error);
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        setDeleting(true);
+        try {
+            await axios.delete(`/api/series/${id}`);
+            setSerie(null);
+            setDeleteOpen(false);
+            toast.success("Série excluída com sucesso!", { id: "delete-sucess" });
+        } catch (error) {
+            toast.error('Erro ao excluir série.', { id: "delete-error" });
+            console.error(error);
+        } finally {
+            setDeleting(false);
+        }
+    };
+
     return (
         <main>
-            <h2>Get By Id - Read</h2>
-            <p>O navegador busca, edita e exclui pelo /api/series/[id] (nosso route.js); o servidor fala com a API usando a api-key privada.</p>
+            <h2>Get By Id - read {serie && `${serie.title}`}</h2>
+            <p>
+                O navegador busca, edita e exclui pelo /api/series/[id] (nosso route.js); o servidor
+                fala com a API usando a api-key privada
+            </p>
             <p>Abra o DevTools - Network: aparece a série (GET/PUT/DELETE), sem x-api-key.</p>
 
             {loading ? (
@@ -47,17 +79,16 @@ export default function ReadByIdPage() {
                 serie && (
                     <>
                         <Card title={serie.title}>
-                            <p>Gênero: {serie.genre}</p>
+                            <p>Gênero: {serie.genero}</p>
                             <p>Plataforma: {serie.plataforma}</p>
-                            <p>temporadas: {serie.temporadas}</p>
-                            <p>Ano do lançamento: {serie.ano_lancamento}</p>
+                            <p>Temporadas: {serie.numero_temporadas}</p>
+                            <p>Ano de Lançamento: {serie.ano_lancamento}</p>
                         </Card>
-
                         <div className="actions">
                             <Button type="primary" onClick={() => setEditOpen(true)}>
                                 Editar
                             </Button>
-                            <Button danger onClick={() => setDeleteOpen(true)}>
+                            <Button type="danger" onClick={() => setDeleteOpen(true)}>
                                 Excluir
                             </Button>
                         </div>
@@ -66,7 +97,16 @@ export default function ReadByIdPage() {
                             openModal={editOpen}
                             serie={serie}
                             confirmLoading={saving}
+                            onSubmit={handleUpdate}
                             onCancel={() => setEditOpen(false)}
+                            />
+
+                        <ConfirmDelete
+                            openModal={deleteOpen}
+                            serie={serie}
+                            confirmLoading={deleting}
+                            onSubmit={handleDelete}
+                            onCancel={() => setDeleteOpen(false)}
                         />
                     </>
                 )
